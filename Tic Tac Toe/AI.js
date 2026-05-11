@@ -16,11 +16,11 @@ const winconditions = [
     [2, 4, 6],
 ];
 
-let options       = ["", "", "", "", "", "", "", "", ""];
+let options = ["", "", "", "", "", "", "", "", ""];
 let currentplayer = "X";
-let running       = false;
-let score         = { X: 0, O: 0 };
-let vsAI          = false;
+let running = false;
+let score = { X: 0, O: 0 };
+let vsAI = false;
 
 loadScore();
 initializegame();
@@ -103,6 +103,14 @@ function checkwinner() {
         return;
     }
 
+    else if (!options.includes("")) {
+    statustext.textContent = "Draw!";
+    running = false;
+    currentplayer = "X";  // add this — reset to X after a draw
+    return;
+}
+
+
     else {
         // FIX 2: changePlayer() -> changeplayer(), currentPlayer -> currentplayer
         changeplayer();
@@ -131,11 +139,18 @@ function resetScores() {
 }
 
 function restartgame() {
-    currentplayer = "X";
     options = ["", "", "", "", "", "", "", "", ""];
     statustext.textContent = `${currentplayer}'s turn`;
-    cells.forEach(cell => { cell.textContent = ""; });
+    cells.forEach(cell => { cell.textContent = ""; cell.style.color = ""; });
     running = true;
+
+    const oldLine = document.getElementById("winLine");
+    if (oldLine) oldLine.remove();
+
+    // if AI won and goes first, trigger its move automatically
+    if (vsAI && currentplayer === "O" && running) {
+        setTimeout(aimove, 600);
+    }
 }
 
 function updatescoreDisplay() {
